@@ -1,16 +1,16 @@
-package Model;
+package br.com.locadora.Model;
 
 
-import Interface.Model;
+import br.com.locadora.Interface.Model;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
 @Table(name = "locacao")
-//TODO UNIQUE
 public class Locacao implements Model {
 
     @Id
@@ -20,16 +20,22 @@ public class Locacao implements Model {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "i_usuario")
+    @NotNull(message = "O usuário deve ser informado!")
     private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "i_filme")
+    @NotNull(message = "O filme deve ser informado!")
     private Filme filme;
 
     @Column(name = "data_locacao")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date dataLocacao;
 
     @Column(name = "data_devolucao")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date dataDevolucao;
 
     public Long getId() {

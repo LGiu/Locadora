@@ -1,15 +1,15 @@
-package Model;
+package br.com.locadora.Model;
 
 
-import Interface.Model;
+import br.com.locadora.Interface.Model;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "diretor")
-//TODO UNIQUE
+@Table(name = "diretor", uniqueConstraints = {@UniqueConstraint(columnNames = {"nome"})})
 public class Diretor implements Model {
 
     @Id
@@ -18,6 +18,7 @@ public class Diretor implements Model {
     private Long id;
 
     @Column(name = "nome")
+    @NotNull(message = "O nome deve ser informado!")
     @Size(max = 255, message = "O nome deve possuir no máximo 255 caracteres!")
     private String nome;
 

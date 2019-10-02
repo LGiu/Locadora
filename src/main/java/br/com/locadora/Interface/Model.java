@@ -1,4 +1,4 @@
-package Interface;
+package br.com.locadora.Interface;
 
 public interface Model {
 

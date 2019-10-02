@@ -1,6 +1,6 @@
-package Repository;
+package br.com.locadora.Repository;
 
-import Model.Filme;
+import br.com.locadora.Model.Filme;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

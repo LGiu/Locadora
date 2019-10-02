@@ -1,17 +1,17 @@
-package Model;
+package br.com.locadora.Model;
 
 
-import Interface.Model;
+import br.com.locadora.Interface.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "usuario")
-//TODO UNIQUE
+@Table(name = "usuario", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class Usuario implements Model {
 
     @Id
@@ -20,24 +20,21 @@ public class Usuario implements Model {
     private Long id;
 
     @Column(name = "email")
-    @Email
+    @Email(message = "Email inválido")
+    @NotNull(message = "O email deve ser informado!")
     @Size(max = 255, message = "O email deve possuir no máximo 255 caracteres!")
     private String email;
 
     @Column(name = "senha")
     @JsonIgnore
+    @NotNull(message = "A senha deve ser informada!")
     @Size(max = 30, message = "A senha deve possuir no máximo 30 caracteres!")
     private String senha;
 
     @Column(name = "nome")
+    @NotNull(message = "O nome deve ser informado!")
     @Size(max = 255, message = "O nome deve possuir no máximo 255 caracteres!")
     private String nome;
-
-    @Column(name = "estoque_total")
-    private Integer estoqueTotal;
-
-    @Column(name = "estoque_atual")
-    private Integer estoqueAtual;
 
     public Long getId() {
         return id;
@@ -69,21 +66,5 @@ public class Usuario implements Model {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public Integer getEstoqueTotal() {
-        return estoqueTotal;
-    }
-
-    public void setEstoqueTotal(Integer estoqueTotal) {
-        this.estoqueTotal = estoqueTotal;
-    }
-
-    public Integer getEstoqueAtual() {
-        return estoqueAtual;
-    }
-
-    public void setEstoqueAtual(Integer estoqueAtual) {
-        this.estoqueAtual = estoqueAtual;
     }
 }

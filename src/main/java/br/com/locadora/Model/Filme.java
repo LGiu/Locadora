@@ -1,17 +1,15 @@
-package Model;
+package br.com.locadora.Model;
 
 
-import Interface.Model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.com.locadora.Interface.Model;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "filme")
-//TODO UNIQUE
+@Table(name = "filme", uniqueConstraints = {@UniqueConstraint(columnNames = {"titulo", "i_diretor"})})
 public class Filme implements Model {
 
     @Id
@@ -20,12 +18,19 @@ public class Filme implements Model {
     private Long id;
 
     @Column(name = "titulo")
+    @NotNull(message = "O título deve ser informado!")
     @Size(max = 255, message = "O titulo deve possuir no máximo 255 caracteres!")
     private String titulo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "i_diretor")
     private Diretor diretor;
+
+    @Column(name = "quantidade_total")
+    private Integer quantidadeTotal;
+
+    @Column(name = "quantidadeAtual")
+    private Integer quantidadeAtual;
 
     public Long getId() {
         return id;
@@ -49,5 +54,21 @@ public class Filme implements Model {
 
     public void setDiretor(Diretor diretor) {
         this.diretor = diretor;
+    }
+
+    public Integer getQuantidadeTotal() {
+        return quantidadeTotal;
+    }
+
+    public void setQuantidadeTotal(Integer quantidadeTotal) {
+        this.quantidadeTotal = quantidadeTotal;
+    }
+
+    public Integer getQuantidadeAtual() {
+        return quantidadeAtual;
+    }
+
+    public void setQuantidadeAtual(Integer quantidadeAtual) {
+        this.quantidadeAtual = quantidadeAtual;
     }
 }
