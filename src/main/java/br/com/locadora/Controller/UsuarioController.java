@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 public class UsuarioController {
@@ -33,5 +34,10 @@ public class UsuarioController {
     @RequestMapping(method = RequestMethod.DELETE, value = "/usuario/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Retorno> excluiUsuario(HttpServletRequest request, @PathVariable long id) {
         return new ResponseEntity<>(usuarioService.exclui(id, true, request.getHeader("token")), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Usuario>> buscaUsuairos(HttpServletRequest request) {
+        return new ResponseEntity<>(usuarioService.buscaLista(true, request.getHeader("token")), HttpStatus.OK);
     }
 }
