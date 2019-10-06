@@ -2,8 +2,8 @@ package br.com.locadora.Model;
 
 
 import br.com.locadora.Interface.Model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "usuario", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario implements Model {
 
     @Id
@@ -26,9 +27,8 @@ public class Usuario implements Model {
     private String email;
 
     @Column(name = "senha")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull(message = "A senha deve ser informada!")
-    @Size(max = 30, message = "A senha deve possuir no máximo 30 caracteres!")
     private String senha;
 
     @Column(name = "nome")

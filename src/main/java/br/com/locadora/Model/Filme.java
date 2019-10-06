@@ -2,7 +2,7 @@ package br.com.locadora.Model;
 
 
 import br.com.locadora.Interface.Model;
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "filme", uniqueConstraints = {@UniqueConstraint(columnNames = {"titulo", "i_diretor"})})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Filme implements Model {
 
     @Id
@@ -29,7 +30,7 @@ public class Filme implements Model {
     @Column(name = "quantidade_total")
     private Integer quantidadeTotal;
 
-    @Column(name = "quantidadeAtual")
+    @Column(name = "quantidade_atual")
     private Integer quantidadeAtual;
 
     public Long getId() {

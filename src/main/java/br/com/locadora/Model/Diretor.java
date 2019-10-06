@@ -2,7 +2,7 @@ package br.com.locadora.Model;
 
 
 import br.com.locadora.Interface.Model;
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "diretor", uniqueConstraints = {@UniqueConstraint(columnNames = {"nome"})})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Diretor implements Model {
 
     @Id

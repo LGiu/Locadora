@@ -6,12 +6,13 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class ServiceGenerico<U extends Model> {
 
@@ -29,7 +30,15 @@ public class ServiceGenerico<U extends Model> {
         }
 
         if (u.getId() != null && !existe(u)) {
-            return new Retorno("O registro não existe!!");
+            return new Retorno("O registro não existe!");
+        }
+
+        BeanWrapper b = new BeanWrapperImpl(u);
+        b.setAutoGrowNestedPaths(true);
+        for (Field field : aClass.getDeclaredFields()) {
+            if (field.getType() == Date.class && b.getPropertyValue(field.getName()) != null) {
+                b.setPropertyValue(field.getName(), SerializadorDatas.dataSerializada((Date) b.getPropertyValue(field.getName())));
+            }
         }
 
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -61,7 +70,12 @@ public class ServiceGenerico<U extends Model> {
             u = jpaRepository.save(u);
             return new Retorno(u);
         } catch (Exception e) {
-            return new Retorno<>(e.getMessage());
+            if (e.getCause().getClass() == org.hibernate.exception.ConstraintViolationException.class) {
+                UniqueConstraint[] un = u.getClass().getAnnotation(Table.class).uniqueConstraints();
+                return new Retorno<>("Os atributos " + Arrays.toString(un[0].columnNames()) + " devem ser únicos!");
+            } else {
+                return new Retorno<>(e.getMessage());
+            }
         }
     }
 
@@ -76,7 +90,11 @@ public class ServiceGenerico<U extends Model> {
         try {
             BeanWrapper b = new BeanWrapperImpl(aClass);
             b.setPropertyValue("id", id);
-            jpaRepository.delete((U) b.getWrappedInstance());
+            U u = (U) b.getWrappedInstance();
+            if (!existe(u)) {
+                return new Retorno("Id informado não existe!");
+            }
+            jpaRepository.delete(u);
             return new Retorno<>(id);
         } catch (Exception e) {
             return new Retorno<>(e.getMessage());
@@ -87,12 +105,18 @@ public class ServiceGenerico<U extends Model> {
         if (verificaPermissao) {
 
         }
-        return buscaPorId(id);
+        U u = buscaPorId(id);
+        if (u.getId() == null) {
+            return null;
+        }
+        return u;
     }
 
     public U buscaPorId(Long id) {
         try {
-            return jpaRepository.getOne(id);
+            //return jpaRepository.getOne(id);
+            Optional<U> u = jpaRepository.findById(id);
+            return u.get();
         } catch (Exception inored) {
             return null;
         }
@@ -108,9 +132,14 @@ public class ServiceGenerico<U extends Model> {
 
     public boolean existe(U u) {
         try {
+            if (u == null || u.getId() == null) {
+                return false;
+            }
+
             return jpaRepository.existsById(u.getId());
         } catch (Exception ignored) {
             return false;
         }
     }
+
 }

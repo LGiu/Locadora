@@ -40,14 +40,26 @@ public class LocacaoService extends ServiceGenerico<Locacao> {
             locacao.setDataLocacao(new Date());
         }
 
-        if (locacao.getDataLocacao() != null && locacao.getDataDevolucao() != null
-                && locacao.getDataLocacao().after(locacao.getDataDevolucao())) {
+        if (locacao.getDataLocacao().after(locacao.getDataPervistaDevolucao())) {
             return new Retorno("A data de locação nao pode ser superior a data de devolução!");
         }
 
-        Filme filme = filmeService.buscaPorId(locacao.getId());
+
+        if (locacao.getDataDevolucao() != null && locacao.getDataLocacao().after(locacao.getDataDevolucao())) {
+            return new Retorno("A data de locação nao pode ser superior a data de devolução!");
+        }
+
+        if (locacao.getDataDevolucao() != null && locacao.getDataDevolucao().before(new Date())) {
+            return new Retorno("A data de devolução deve ser maior o igual a hoje!");
+        }
+
+        if (locacao.getDataPervistaDevolucao() != null && locacao.getDataPervistaDevolucao().before(new Date())) {
+            return new Retorno("A data prevista de devolução deve ser maior o igual a hoje!");
+        }
+
+        Filme filme = (Filme) filmeService.buscaPorId(locacao.getFilme().getId());
         if (filme != null) {
-            if (locacao.getDataDevolucao() == null && filme.getId() == null) {
+            if (locacao.getId() == null) {
                 if (filme.getQuantidadeAtual() > 0) {
                     filme.setQuantidadeAtual(filme.getQuantidadeAtual() - 1);
                     Retorno retornoFilme = filmeService.salva(filme);
@@ -57,16 +69,15 @@ public class LocacaoService extends ServiceGenerico<Locacao> {
                 } else {
                     return new Retorno("O filme não pode ser locado porque está sem estoque!");
                 }
-            } else if (filme.getId() != null) {
-                Locacao locacaoAnt = buscaPorId(locacao.getId());
-                if (locacaoAnt.getDataDevolucao() == null && locacao.getDataDevolucao() != null) {
-                    filme.setQuantidadeAtual(filme.getQuantidadeAtual() + 1);
-                    Retorno retornoFilme = filmeService.salva(filme);
-                    if (retornoFilme.isErro()) {
-                        return new Retorno(retornoFilme.getMensagem());
-                    }
+            } else if (locacao.getDataDevolucao() != null) {
+                filme.setQuantidadeAtual(filme.getQuantidadeAtual() + 1);
+                Retorno retornoFilme = filmeService.salva(filme);
+                if (retornoFilme.isErro()) {
+                    return new Retorno(retornoFilme.getMensagem());
                 }
             }
+        } else {
+            return new Retorno("O filme informado não existe!");
         }
 
         return retorno;

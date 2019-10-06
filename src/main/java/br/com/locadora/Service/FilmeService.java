@@ -11,11 +11,16 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 @Service
-public class FilmeService extends ServiceGenerico<Filme> {
+public class FilmeService<List> extends ServiceGenerico<Filme> {
+
+    private final FilmeRepository filmeRepository;
+    private final DiretorService diretorService;
 
     @Autowired
-    public FilmeService(FilmeRepository filmeRepository) {
+    public FilmeService(FilmeRepository filmeRepository, DiretorService diretorService) {
         super(filmeRepository, Filme.class);
+        this.filmeRepository = filmeRepository;
+        this.diretorService = diretorService;
     }
 
     @Override
@@ -26,6 +31,32 @@ public class FilmeService extends ServiceGenerico<Filme> {
 
     @Override
     public Retorno validador(Filme filme) {
-        return super.validador(filme);
+        Retorno retorno = super.validador(filme);
+        if (retorno.isErro()) {
+            return retorno;
+        }
+
+
+        if (filme.getQuantidadeTotal() == null) {
+            filme.setQuantidadeTotal(1);
+        }
+
+        if (filme.getQuantidadeAtual() == null) {
+            filme.setQuantidadeAtual(filme.getQuantidadeTotal());
+        }
+
+        if (filme.getQuantidadeTotal() < filme.getQuantidadeAtual()) {
+            return new Retorno("A quantidade total não pode ser menor que a quantidade atual!");
+        }
+
+        if (!diretorService.existe(filme.getDiretor())) {
+            return new Retorno("O diretor informado não existe!");
+        }
+
+        return retorno;
+    }
+
+    public java.util.List<Filme> buscaFilmesPorTitulo(String titulo) {
+        return filmeRepository.findFilmeByTituloLike("%" + titulo + "%");
     }
 }

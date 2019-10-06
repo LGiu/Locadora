@@ -3,7 +3,7 @@ package br.com.locadora.Model;
 
 import br.com.locadora.Interface.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +11,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "locacao")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Locacao implements Model {
 
     @Id
@@ -32,6 +33,12 @@ public class Locacao implements Model {
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date dataLocacao;
+
+    @Column(name = "data_prevista_devolucao")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @NotNull(message = "A data prevista de devolução deve ser informada!")
+    private Date dataPervistaDevolucao;
 
     @Column(name = "data_devolucao")
     @Temporal(TemporalType.TIMESTAMP)
@@ -76,5 +83,13 @@ public class Locacao implements Model {
 
     public void setDataDevolucao(Date dataDevolucao) {
         this.dataDevolucao = dataDevolucao;
+    }
+
+    public Date getDataPervistaDevolucao() {
+        return dataPervistaDevolucao;
+    }
+
+    public void setDataPervistaDevolucao(Date dataPervistaDevolucao) {
+        this.dataPervistaDevolucao = dataPervistaDevolucao;
     }
 }
