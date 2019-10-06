@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -20,22 +21,22 @@ public class LocacaoController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/locacao/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Locacao> buscaLocacao(@PathVariable long id) {
-        return new ResponseEntity<>(locacaoService.buscaPorId(id, true), HttpStatus.OK);
+    public ResponseEntity<Locacao> buscaLocacao(HttpServletRequest request, @PathVariable long id) {
+        return new ResponseEntity<>(locacaoService.buscaPorId(id, true, request.getHeader("token")), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/locacaos", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Locacao>> buscaLocacaos() {
-        return new ResponseEntity<>(locacaoService.buscaLista(), HttpStatus.OK);
+    public ResponseEntity<List<Locacao>> buscaLocacaos(HttpServletRequest request) {
+        return new ResponseEntity<>(locacaoService.buscaLista(true, request.getHeader("token")), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/locacao", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Retorno> salvaLocacao(@RequestBody Locacao locacao) {
-        return new ResponseEntity<>(locacaoService.salva(locacao, true), HttpStatus.OK);
+    public ResponseEntity<Retorno> salvaLocacao(HttpServletRequest request, @RequestBody Locacao locacao) {
+        return new ResponseEntity<>(locacaoService.salva(locacao, true, request.getHeader("token")), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/locacao/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Retorno> excluiLocacao(@PathVariable long id) {
-        return new ResponseEntity<>(locacaoService.exclui(id, true), HttpStatus.OK);
+    public ResponseEntity<Retorno> excluiLocacao(HttpServletRequest request, @PathVariable long id) {
+        return new ResponseEntity<>(locacaoService.exclui(id, true, request.getHeader("token")), HttpStatus.OK);
     }
 }

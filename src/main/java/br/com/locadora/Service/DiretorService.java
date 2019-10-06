@@ -13,9 +13,12 @@ import javax.transaction.Transactional;
 @Service
 public class DiretorService extends ServiceGenerico<Diretor> {
 
+    private final LoginService loginService;
+
     @Autowired
-    public DiretorService(DiretorRepository diretorRepository) {
-        super(diretorRepository, Diretor.class);
+    public DiretorService(DiretorRepository diretorRepository, LoginService loginService) {
+        super(diretorRepository, Diretor.class, loginService);
+        this.loginService = loginService;
     }
 
     @Override

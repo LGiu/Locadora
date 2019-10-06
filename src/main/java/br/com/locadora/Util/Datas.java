@@ -5,9 +5,10 @@ import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
-public class SerializadorDatas {
+public class Datas {
 
     public static Date dataSerializada(Date date) {
         OffsetDateTime localDateTime = date.toInstant().atZone(ZoneId.of("UTC")).toOffsetDateTime();
@@ -21,5 +22,13 @@ public class SerializadorDatas {
 
     public static Date stringToDate(String data, String formato) throws ParseException {
         return new SimpleDateFormat(formato).parse(data);
+    }
+
+    public static Date data(Date date, int minutos) {
+        Date dt = new Date(date.getTime());
+        Calendar c = Calendar.getInstance();
+        c.setTime(dt);
+        c.add(Calendar.MINUTE, minutos);
+        return c.getTime();
     }
 }

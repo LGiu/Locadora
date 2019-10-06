@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -20,24 +21,24 @@ public class DiretorController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/diretor/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Diretor> buscaDiretor(@PathVariable long id) {
-        return new ResponseEntity<>(diretorService.buscaPorId(id, true), HttpStatus.OK);
+    public ResponseEntity<Diretor> buscaDiretor(HttpServletRequest request, @PathVariable long id) {
+        return new ResponseEntity<>(diretorService.buscaPorId(id, true, request.getHeader("token")), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/diretores", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Diretor>> buscaDiretores() {
-        return new ResponseEntity<>(diretorService.buscaLista(), HttpStatus.OK);
+    public ResponseEntity<List<Diretor>> buscaDiretores(HttpServletRequest request) {
+        return new ResponseEntity<>(diretorService.buscaLista(true, request.getHeader("token")), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/diretor", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Retorno> salvaDiretor(@RequestBody Diretor diretor) {
-        return new ResponseEntity<>(diretorService.salva(diretor, true), HttpStatus.OK);
+    public ResponseEntity<Retorno> salvaDiretor(HttpServletRequest request, @RequestBody Diretor diretor) {
+        return new ResponseEntity<>(diretorService.salva(diretor, true, request.getHeader("token")), HttpStatus.OK);
 
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/diretor/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Retorno> excluiDiretor(@PathVariable long id) {
-        return new ResponseEntity<>(diretorService.exclui(id, true), HttpStatus.OK);
+    public ResponseEntity<Retorno> excluiDiretor(HttpServletRequest request, @PathVariable long id) {
+        return new ResponseEntity<>(diretorService.exclui(id, true, request.getHeader("token")), HttpStatus.OK);
 
     }
 }

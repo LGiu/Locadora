@@ -16,11 +16,13 @@ import java.util.Date;
 public class LocacaoService extends ServiceGenerico<Locacao> {
 
     private final FilmeService filmeService;
+    private final LoginService loginService;
 
     @Autowired
-    public LocacaoService(LocacaoRepository locacaoRepository, FilmeService filmeService) {
-        super(locacaoRepository, Locacao.class);
+    public LocacaoService(LocacaoRepository locacaoRepository, FilmeService filmeService, LoginService loginService) {
+        super(locacaoRepository, Locacao.class, loginService);
         this.filmeService = filmeService;
+        this.loginService = loginService;
     }
 
     @Override

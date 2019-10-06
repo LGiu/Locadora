@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class UsuarioController {
 
@@ -19,17 +21,17 @@ public class UsuarioController {
 
 
     @RequestMapping(method = RequestMethod.GET, value = "/usuario/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Usuario> buscaUsuario(@PathVariable long id) {
-        return new ResponseEntity<>(usuarioService.buscaPorId(id, true), HttpStatus.OK);
+    public ResponseEntity<Usuario> buscaUsuario(HttpServletRequest request, @PathVariable long id) {
+        return new ResponseEntity<>(usuarioService.buscaPorId(id, true, request.getHeader("token")), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/usuario", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Retorno> salvaUsuario(@RequestBody Usuario usuario) {
-        return new ResponseEntity<>(usuarioService.salva(usuario, true), HttpStatus.OK);
+    public ResponseEntity<Retorno> salvaUsuario(HttpServletRequest request, @RequestBody Usuario usuario) {
+        return new ResponseEntity<>(usuarioService.salva(usuario, true, request.getHeader("token")), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/usuario/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Retorno> excluiUsuario(@PathVariable long id) {
-        return new ResponseEntity<>(usuarioService.exclui(id, true), HttpStatus.OK);
+    public ResponseEntity<Retorno> excluiUsuario(HttpServletRequest request, @PathVariable long id) {
+        return new ResponseEntity<>(usuarioService.exclui(id, true, request.getHeader("token")), HttpStatus.OK);
     }
 }

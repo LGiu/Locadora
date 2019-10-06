@@ -15,12 +15,14 @@ public class FilmeService<List> extends ServiceGenerico<Filme> {
 
     private final FilmeRepository filmeRepository;
     private final DiretorService diretorService;
+    private final LoginService loginService;
 
     @Autowired
-    public FilmeService(FilmeRepository filmeRepository, DiretorService diretorService) {
-        super(filmeRepository, Filme.class);
+    public FilmeService(FilmeRepository filmeRepository, DiretorService diretorService, LoginService loginService) {
+        super(filmeRepository, Filme.class, loginService);
         this.filmeRepository = filmeRepository;
         this.diretorService = diretorService;
+        this.loginService = loginService;
     }
 
     @Override
@@ -56,7 +58,11 @@ public class FilmeService<List> extends ServiceGenerico<Filme> {
         return retorno;
     }
 
-    public java.util.List<Filme> buscaFilmesPorTitulo(String titulo) {
+    public java.util.List<Filme> buscaFilmesPorTitulo(String titulo, String token) {
+        Retorno retorno = super.validaToken(token);
+        if (retorno.isErro()) {
+            return null;
+        }
         return filmeRepository.findFilmeByTituloLike("%" + titulo + "%");
     }
 }

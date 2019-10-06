@@ -3,31 +3,33 @@ package br.com.locadora.Service;
 
 import br.com.locadora.Model.Usuario;
 import br.com.locadora.Repository.UsuarioRepository;
+import br.com.locadora.Util.Cripto;
 import br.com.locadora.Util.Retorno;
 import br.com.locadora.Util.ServiceGenerico;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.UUID;
 
 @Service
 public class UsuarioService extends ServiceGenerico<Usuario> {
 
     private final UsuarioRepository usuarioRepository;
+    private final LoginService loginService;
+
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository) {
-        super(usuarioRepository, Usuario.class);
+    public UsuarioService(UsuarioRepository usuarioRepository, LoginService loginService) {
+        super(usuarioRepository, Usuario.class, loginService);
         this.usuarioRepository = usuarioRepository;
+        this.loginService = loginService;
     }
 
     @Override
     @Transactional
     public Retorno salva(Usuario usuario) {
         if (usuario.getSenha() != null) {
-            usuario.setSenha(new BCryptPasswordEncoder().encode(UUID.randomUUID().toString()));
+            usuario.setSenha(Cripto.criptografa(usuario.getSenha()));
         }
         return super.salva(usuario);
     }
@@ -45,6 +47,10 @@ public class UsuarioService extends ServiceGenerico<Usuario> {
         }
 
         return retorno;
+    }
+
+    public Usuario buscaPorEmailESenha(String email, String senha) {
+        return usuarioRepository.findByEmailAndSenha(email, senha);
     }
 
 }

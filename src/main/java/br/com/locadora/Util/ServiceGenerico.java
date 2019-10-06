@@ -2,6 +2,7 @@ package br.com.locadora.Util;
 
 
 import br.com.locadora.Interface.Model;
+import br.com.locadora.Service.LoginService;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,10 +19,12 @@ public class ServiceGenerico<U extends Model> {
 
     private final JpaRepository<U, Long> jpaRepository;
     private final Class aClass;
+    private final LoginService loginService;
 
-    public ServiceGenerico(JpaRepository<U, Long> jpaRepository, Class aClass) {
+    public ServiceGenerico(JpaRepository<U, Long> jpaRepository, Class aClass, LoginService loginService) {
         this.jpaRepository = jpaRepository;
         this.aClass = aClass;
+        this.loginService = loginService;
     }
 
     public Retorno validador(U u) {
@@ -37,7 +40,7 @@ public class ServiceGenerico<U extends Model> {
         b.setAutoGrowNestedPaths(true);
         for (Field field : aClass.getDeclaredFields()) {
             if (field.getType() == Date.class && b.getPropertyValue(field.getName()) != null) {
-                b.setPropertyValue(field.getName(), SerializadorDatas.dataSerializada((Date) b.getPropertyValue(field.getName())));
+                b.setPropertyValue(field.getName(), Datas.dataSerializada((Date) b.getPropertyValue(field.getName())));
             }
         }
 
@@ -54,19 +57,29 @@ public class ServiceGenerico<U extends Model> {
         return new Retorno();
     }
 
-    public Retorno salva(U u, boolean verificaPermissao) {
+    public Retorno salva(U u, boolean verificaPermissao, String token) {
         if (verificaPermissao) {
-
+            Retorno retorno = loginService.verificaLogin(token);
+            if (retorno.isErro()) {
+                return retorno;
+            }
         }
         return salva(u);
     }
 
     public Retorno salva(U u) {
+        return salva(u, true);
+    }
+
+    public Retorno salva(U u, boolean valida) {
         try {
-            Retorno retorno = validador(u);
-            if (retorno.isErro()) {
-                return retorno;
+            if (valida) {
+                Retorno retorno = validador(u);
+                if (retorno.isErro()) {
+                    return retorno;
+                }
             }
+
             u = jpaRepository.save(u);
             return new Retorno(u);
         } catch (Exception e) {
@@ -79,9 +92,12 @@ public class ServiceGenerico<U extends Model> {
         }
     }
 
-    public Retorno exclui(Long id, boolean verificaPermissao) {
+    public Retorno exclui(Long id, boolean verificaPermissao, String token) {
         if (verificaPermissao) {
-
+            Retorno retorno = loginService.verificaLogin(token);
+            if (retorno.isErro()) {
+                return null;
+            }
         }
         return exclui(id);
     }
@@ -101,9 +117,12 @@ public class ServiceGenerico<U extends Model> {
         }
     }
 
-    public U buscaPorId(Long id, boolean verificaPermissao) {
+    public U buscaPorId(Long id, boolean verificaPermissao, String token) {
         if (verificaPermissao) {
-
+            Retorno retorno = loginService.verificaLogin(token);
+            if (retorno.isErro()) {
+                return null;
+            }
         }
         U u = buscaPorId(id);
         if (u.getId() == null) {
@@ -114,12 +133,22 @@ public class ServiceGenerico<U extends Model> {
 
     public U buscaPorId(Long id) {
         try {
-            //return jpaRepository.getOne(id);
             Optional<U> u = jpaRepository.findById(id);
             return u.get();
         } catch (Exception inored) {
             return null;
         }
+    }
+
+    public List<U> buscaLista(boolean verificaPermissao, String token) {
+        if (verificaPermissao) {
+            Retorno retorno = loginService.verificaLogin(token);
+            if (retorno.isErro()) {
+                return null;
+            }
+        }
+
+        return buscaLista();
     }
 
     public List<U> buscaLista() {
@@ -141,5 +170,10 @@ public class ServiceGenerico<U extends Model> {
             return false;
         }
     }
+
+    public Retorno validaToken(String token) {
+        return loginService.verificaLogin(token);
+    }
+
 
 }
