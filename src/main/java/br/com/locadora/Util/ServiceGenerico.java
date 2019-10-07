@@ -85,7 +85,11 @@ public class ServiceGenerico<U extends Model> {
         } catch (Exception e) {
             if (e.getCause().getClass() == org.hibernate.exception.ConstraintViolationException.class) {
                 UniqueConstraint[] un = u.getClass().getAnnotation(Table.class).uniqueConstraints();
-                return new Retorno<>("Os atributos " + Arrays.toString(un[0].columnNames()) + " devem ser únicos!");
+                if (un.length > 0) {
+                    return new Retorno<>("Os atributos " + Arrays.toString(un[0].columnNames()) + " devem ser únicos!");
+                } else {
+                    return new Retorno<>("Exitem atributos que devem ser únicos!");
+                }
             } else {
                 return new Retorno<>(e.getMessage());
             }

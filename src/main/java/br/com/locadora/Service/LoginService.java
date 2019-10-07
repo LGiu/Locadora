@@ -84,7 +84,7 @@ public class LoginService extends ServiceGenerico<Login> {
             return new Retorno("Usuário deve estar logado!");
         }
 
-        if (Datas.data(new Date(), 30).after(login.getDataUltimaRequisicao())) {
+        if (Datas.data(new Date(), 30).before(login.getDataUltimaRequisicao())) {
             login.setDataLogoff(new Date());
             super.salva(login, false);
             return new Retorno("Login expirou!");
