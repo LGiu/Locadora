@@ -1,4 +1,4 @@
-# WebService de Locadora
+# Exercício de seleção Desenvolvedor Back-End Java - Webservice Locadora
 
 O sistema foi desenvolvido em Java, utilizando o framework Spring Boot. A lingugem de banco utilizada foi o Mysql.
 
