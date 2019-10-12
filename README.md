@@ -1,4 +1,40 @@
 # Exercício de seleção Desenvolvedor Back-End Java - Webservice Locadora
+O desafio:
+- Você irá criar um sistema de uma locadora de filmes. O sistema deve permitir a criação de
+usuários (clientes), logon e logoff de um usuário, listagem de filmes disponíveis, locação de
+um filme, devolução de um filme, e pesquisa de filme pelo título.
+- Um filme deve possuir um título e um diretor.
+- A locadora pode possuir múltiplas cópias de um mesmo filme.
+- Um usuário deve possuir um e-mail para se identificar no sistema, um nome (para
+exibição) e uma senha.
+- O sistema pode ser acessado concorrentemente por múltiplos usuários, que
+competirão pela locação dos filmes.
+- Você deve escrever uma especificação de webservices para este sistema de locação de
+filmes. Os webservices devem usar JSON sobre HTTP. A especificação precisa oferecer
+detalhes suficientes para que um desenvolvedor não familiarizado com o sistema consiga
+criar uma integração com este sistema (por exemplo, um website ou um app mobile), mas
+deve ser concisa a ideia é que não se perca muito tempo escrevendo esta especificação;
+uma simples listagem das chamadas com parâmetros de entrada e saída, e um descritivo
+do que a chamada faz, é suficiente. Por exemplo, se você estiver criando um documento
+com capa, título, índice, então já está fazendo mais do que o necessário seja econômico
+aqui.
+- O sistema não terá 'interface gráfica'! Será acessado somente via os webservices
+acima.
+- Você deve modelar o banco de dados para a aplicação. O script SQL de criação do banco
+deve ser enviado para nós. Qualquer banco pode ser usado, desde que seja relacional e
+suporte SQL, sugerimos que use MySQL.
+- Popular o banco de dados da locadora com filmes está fora do escopo do trabalho; isto
+pode ser feito 'na mão', direto no banco de dados (usando por exemplo o MySQL
+WorkBench), ou então com inserts no próprio script de criação do BD.
+- Após as especificações dos webservices e do banco de dados estarem prontas, o sistema
+deve ser implementado em Java.
+- Após concluir e testar sua implementação, nos envie os códigos fontes Java, o script de
+criação do banco de dados e a especificação dos webservices através de um link, conforme
+as instruções no início deste documento.
+
+________________________________________________
+
+
 
 O sistema foi desenvolvido em Java, utilizando o framework Spring Boot. A lingugem de banco utilizada foi o Mysql.
 
